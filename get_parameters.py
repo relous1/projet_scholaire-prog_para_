@@ -10,7 +10,8 @@ def get_user_parameters():
     parser = argparse.ArgumentParser()
     parser.add_argument("ftp_website", help="Full FTP Website ", type=str)
     parser.add_argument("local_directory", help="Directory of the file we want to save", type=str)
-    parser.add_argument("refresh_frequency", help="Refresh frequency to synchronize with FTP server", type=str)
+    parser.add_argument("max_depth", help="Maximal depth starting from the root directory", type=int)
+    parser.add_argument("refresh_frequency", help="Refresh frequency to synchronize with FTP server (in seconds)", type=int)
     parser.add_argument("excluded_extensions", nargs='*', help="List of the extensions to excluded when synchronizing",
                         type=str, default=[])
     # nargs = '*' : the last argument take zero or more parameter
@@ -26,6 +27,17 @@ def get_user_parameters():
     if os.path.exists(local_directory) is False:
         Logger.log_error("Invalid FTP website")
         wrong_input = True
+
+    # get the maximal depth
+    try:
+        max_depth = int(args.max_depth)
+    except ValueError:
+        Logger.log_error("Invalid input for the maximal depth : must be an integer")
+        wrong_input = True
+    else:
+        if max_depth <= 0:
+            Logger.log_error("Invalid value for the maximal depth : it can not be inferior or equal to 0")
+            wrong_input = True
 
     # get the refresh frequency
     try:
@@ -43,6 +55,6 @@ def get_user_parameters():
 
     if wrong_input is False:
         Logger.log_info("Valid parameters")
-        return ftp_website, local_directory, refresh_frequency, excluded_extensions
+        return ftp_website, local_directory, max_depth, refresh_frequency, excluded_extensions
     else:
         return 0

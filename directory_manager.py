@@ -8,15 +8,17 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(mess
 
 
 class DirectoryManager:
-    def __init__(self, directory, depth):
+    def __init__(self, directory, depth, excluded_extensions):
         self.root_directory = directory
         self.depth = depth
+        self.excluded_extensions = excluded_extensions
         self.synchronize_dict = {}
         self.os_separator_count = len(directory.split(os.path.sep))
         self.updates = []
         self.paths_explored = []
         # init files / folders to synchronize with the FTP server
         self.init_synchronization(self.root_directory)
+        logging.info(self.synchronize_dict)
 
     def init_synchronization(self, directory):
         for path_file, dirs, files in os.walk(directory):
@@ -32,7 +34,8 @@ class DirectoryManager:
             for file_name in files:
                 file_path = os.path.join(path_file, file_name)
 
-                if self.is_superior_max_depth(file_path) is False:
+                if (self.is_superior_max_depth(file_path) is False) and \
+                        (self.contain_excluded_extensions(file_path) is False):
                     self.synchronize_dict[file_path] = File(file_path)
 
     def synchronize_directory(self, frequency):  # frequency in seconds
@@ -76,7 +79,8 @@ class DirectoryManager:
             for file_name in files:
                 file_path = os.path.join(path_file, file_name)
 
-                if self.is_superior_max_depth(file_path) is False:
+                if self.is_superior_max_depth(file_path) is False and \
+                        (self.contain_excluded_extensions(file_path) is False):
                     self.paths_explored.append(file_path)
                     if file_path in self.synchronize_dict:
                         if self.synchronize_dict[file_path].update_instance() == 1:
@@ -107,3 +111,11 @@ class DirectoryManager:
             return False
         else:
             return True
+
+    # check if the file contains a prohibited extensions
+    def contain_excluded_extensions(self, file):
+        extension = file.split(".")[1]
+        if ".{0}".format(extension) in self.excluded_extensions:
+            return True
+        else:
+            return False

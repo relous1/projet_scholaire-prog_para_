@@ -4,7 +4,9 @@ import os
 class File:
     def __init__(self, path):
         self.path = path
+        # get creation
         self.creation_time = os.path.getctime(path)
+        # get last modification time
         self.last_modification_time = os.path.getmtime(path)
 
     def update_instance(self):

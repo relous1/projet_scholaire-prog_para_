@@ -1,8 +1,6 @@
-import logging
 import os
 from ftplib import FTP
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+from logger import Logger
 
 
 class TalkToFTP:
@@ -16,28 +14,30 @@ class TalkToFTP:
 
     def connect(self):
         self.ftp = FTP(self.host, self.user, self.password)
-        logging.info("Connect to %s", self.host)
 
     def disconnect(self):
         self.ftp.quit()
-        logging.info("Disconnect")
 
     def go_to(self, folder_path):
         self.ftp.cwd(folder_path)
 
     def create_folder(self, folder):
         self.ftp.mkd(folder)
+        Logger.log_info("Folder created : " + folder)
 
     def remove_folder(self, folder):
         self.ftp.rmd(folder)
+        Logger.log_info("Folder removed : " + folder)
 
     def file_transfer(self, path, srv_path, file_name):
         file = open(os.path.join(path, file_name), 'rb')
         self.ftp.storbinary('STOR ' + srv_path, file)
         file.close()
+        Logger.log_info("File created / updated : " + file_name)
 
     def remove_file(self, file):
         self.ftp.delete(file)
+        Logger.log_info("File removed : %s" + file)
 
     def get_folder_content(self, path):
         return self.ftp.nlst(path)
@@ -55,10 +55,5 @@ class TalkToFTP:
             return True
         else:
             return False
-
-if __name__ == "__main__":
-    logging.info("test")
-    test = TalkToFTP("localhost,Xion,xion,tata")
-    test.connect()
 
 

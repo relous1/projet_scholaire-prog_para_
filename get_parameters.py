@@ -8,11 +8,11 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(mess
 
 def get_user_parameters():
     parser = argparse.ArgumentParser()
-    parser.add_argument("ftp_website", help="Full FTP Website ", type=str)
-    parser.add_argument("local_directory", help="Directory of the file we want to save", type=str)
-    parser.add_argument("max_depth", help="Maximal depth starting from the root directory", type=int)
+    parser.add_argument("ftp_website", help="Full FTP Website(username,password,directory) ", type=str)
+    parser.add_argument("local_directory", help="Directory we want to synchronize", type=str)
+    parser.add_argument("max_depth", help="Maximal depth to synchronize starting from the root directory", type=int)
     parser.add_argument("refresh_frequency", help="Refresh frequency to synchronize with FTP server (in seconds)", type=int)
-    parser.add_argument("excluded_extensions", nargs='*', help="List of the extensions to excluded when synchronizing",
+    parser.add_argument("excluded_extensions", nargs='*', help="List of the extensions to excluded when synchronizing (optional)",
                         type=str, default=[])
     # nargs = '*' : the last argument take zero or more parameter
     args = parser.parse_args()

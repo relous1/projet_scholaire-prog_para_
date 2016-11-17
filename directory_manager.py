@@ -31,7 +31,6 @@ class DirectoryManager:
             directory_split = ""
         else:
             directory_split = self.ftp.directory.rsplit(os.path.sep, 1)[0]
-        logging.info(directory_split)
         if not self.ftp.if_exist(self.ftp.directory, self.ftp.get_folder_content(directory_split)):
             self.ftp.create_folder(self.ftp.directory)
         self.ftp.disconnect()
@@ -80,6 +79,7 @@ class DirectoryManager:
                         srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
                         directory_split = srv_full_path.rsplit(os.path.sep,1)[0]
                         if not self.ftp.if_exist(srv_full_path, self.ftp.get_folder_content(directory_split)):
+                            # add this directory to the FTP server
                             self.ftp.create_folder(srv_full_path)
 
             for file_name in files:
@@ -100,6 +100,7 @@ class DirectoryManager:
                             split_path = file_path.split(self.root_directory)
                             srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
                             self.ftp.remove_file(srv_full_path)
+                            # update this file on the FTP server
                             self.ftp.file_transfer(path_file, srv_full_path, file_name)
 
                     else:
@@ -108,6 +109,7 @@ class DirectoryManager:
                         self.synchronize_dict[file_path] = File(file_path)
                         split_path = file_path.split(self.root_directory)
                         srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
+                        # add this file on the FTP server
                         self.ftp.file_transfer(path_file, srv_full_path, file_name)
 
     def any_removals(self):

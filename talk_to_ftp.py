@@ -33,22 +33,18 @@ class TalkToFTP:
         file = open(os.path.join(path, file_name), 'rb')
         self.ftp.storbinary('STOR ' + srv_path, file)
         file.close()
-        Logger.log_info("File created / updated : " + file_name)
+        Logger.log_info("File created / updated : srv {0} file {1}".format(srv_path, file_name ))
 
     def remove_file(self, file):
         self.ftp.delete(file)
         Logger.log_info("File removed : %s" + file)
 
     def get_folder_content(self, path):
-        return self.ftp.nlst(path)
-
-    def if_exists(self, element, list):
-        for path in list:
-            path_split = path.split("/")
-            element_name = path_split[1]
-            if element_name == element:
-                return True
-        return False
+        init_list = self.ftp.nlst(path)
+        new_list = []
+        for path in init_list:
+            new_list.append(path.replace("\\", os.path.sep).replace("/", os.path.sep))
+        return new_list
 
     def if_exist(self, element, list):
         if element in list:

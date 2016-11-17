@@ -26,7 +26,8 @@ class DirectoryManager:
         self.ftp = TalkToFTP(ftp_website)
         # create the directory on the FTP if not already existing
         self.ftp.connect()
-        if not self.ftp.if_exist(self.ftp.directory, self.ftp.get_folder_content("")):
+        directory_split = self.ftp.directory.rsplit(os.path.sep, 1)[0]
+        if not self.ftp.if_exist(self.ftp.directory, self.ftp.get_folder_content(directory_split)):
             self.ftp.create_folder(self.ftp.directory)
         self.ftp.disconnect()
 
@@ -72,7 +73,9 @@ class DirectoryManager:
                         # create it on FTP server
                         split_path = folder_path.split(self.root_directory)
                         srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
-                        self.ftp.create_folder(srv_full_path)
+                        directory_split = srv_full_path.rsplit(os.path.sep,1)[0]
+                        if not self.ftp.if_exist(srv_full_path, self.ftp.get_folder_content(directory_split)):
+                            self.ftp.create_folder(srv_full_path)
 
             for file_name in files:
                 file_path = os.path.join(path_file, file_name)
@@ -158,7 +161,7 @@ class DirectoryManager:
         # we iterate starting from the innermost file
         for i in range(len(sorted_containers)-1, -1, -1):
             for to_delete in sorted_containers[i]:
-                to_delete_ftp = "{0}{1}{2}".format(srv_full_path, os.path.sep, to_delete.split(os.path.sep)[-1])
+                to_delete_ftp = "{0}{1}{2}".format(self.ftp.directory, os.path.sep, to_delete.split(self.root_directory)[1])
                 if isinstance(self.synchronize_dict[to_delete], File):
                     self.ftp.remove_file(to_delete_ftp)
                     self.to_remove_from_dict.append(to_delete)

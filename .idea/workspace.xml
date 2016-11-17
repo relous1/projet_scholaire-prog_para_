@@ -4,7 +4,6 @@
     <list default="true" id="8e595ec7-8f81-4e3b-a4c9-9d6a28788686" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/directory_manager.py" afterPath="$PROJECT_DIR$/directory_manager.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/talk_to_ftp.py" afterPath="$PROJECT_DIR$/talk_to_ftp.py" />
     </list>
     <ignored path="FilesMirror.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -17,7 +16,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/FilesMirror$main.coverage" NAME="main Coverage Results" MODIFIED="1479399072267" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/FilesMirror$main.coverage" NAME="main Coverage Results" MODIFIED="1479399984883" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -40,7 +39,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="talk_to_ftp.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="talk_to_ftp.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/talk_to_ftp.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1012">
@@ -52,11 +51,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="directory_manager.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="directory_manager.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/directory_manager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="130" column="0" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
+            <state relative-caret-position="-2288">
+              <caret line="21" column="80" selection-start-line="21" selection-start-column="80" selection-end-line="21" selection-end-column="80" />
               <folding />
             </state>
           </provider>
@@ -397,6 +396,14 @@
       <option name="presentableId" value="Default" />
       <updated>1478180242728</updated>
     </task>
+    <task id="LOCAL-00001" summary="End of the project : eveything is working !">
+      <created>1479399451960</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1479399451960</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -453,6 +460,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="End of the project : eveything is working !" />
+    <option name="LAST_COMMIT_MESSAGE" value="End of the project : eveything is working !" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -844,14 +855,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/directory_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="130" column="0" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/talk_to_ftp.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1012">
@@ -859,6 +862,14 @@
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/directory_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2288">
+          <caret line="21" column="80" selection-start-line="21" selection-start-column="80" selection-end-line="21" selection-end-column="80" />
+          <folding />
         </state>
       </provider>
     </entry>

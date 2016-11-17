@@ -26,7 +26,12 @@ class DirectoryManager:
         self.ftp = TalkToFTP(ftp_website)
         # create the directory on the FTP if not already existing
         self.ftp.connect()
-        directory_split = self.ftp.directory.rsplit(os.path.sep, 1)[0]
+        if self.ftp.directory.count(os.path.sep) == 0:
+            # want to create folder at the root of the server
+            directory_split = ""
+        else:
+            directory_split = self.ftp.directory.rsplit(os.path.sep, 1)[0]
+        logging.info(directory_split)
         if not self.ftp.if_exist(self.ftp.directory, self.ftp.get_folder_content(directory_split)):
             self.ftp.create_folder(self.ftp.directory)
         self.ftp.disconnect()

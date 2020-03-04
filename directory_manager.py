@@ -5,17 +5,36 @@ from Directory import Directory
 from File import File
 from talk_to_ftp import TalkToFTP
 
+import multi_processing
+import multiprocessing
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 
-
 class DirectoryManager:
-    def __init__(self, ftp_website, directory, depth, excluded_extensions):
+    def __init__(self, ftp_website, directory, depth, nb_processe, excluded_extensions):
+        # dictionary to remember the instance of File / Directory saved on the FTP
+        self.synchronize_dict = {}
+
+        self.ftp_website = ftp_website
+###############################################################################################
+        self.listProcesses = []
+        self.nb_processe = nb_processe
+        self.job_to_update = multiprocessing.Queue()
+        if self.nb_processe > 0:
+###############################################################################################
+
+            for x in range(self.nb_processe):
+                p = multiprocessing.Process(target=multi_processing.updating_file_p,
+                                            args=(self.ftp_website, multi_processing.Queue_initialisation.QUEUE,))
+                p.start()
+                self.listProcesses.append(p)
+
+###############################################################################################
         self.root_directory = directory
         self.depth = depth
         # list of the extensions to exclude during synchronization
         self.excluded_extensions = excluded_extensions
-        # dictionary to remember the instance of File / Directory saved on the FTP
-        self.synchronize_dict = {}
+
         self.os_separator_count = len(directory.split(os.path.sep))
         # list of the path explored for each synchronization
         self.paths_explored = []
@@ -35,8 +54,26 @@ class DirectoryManager:
             self.ftp.create_folder(self.ftp.directory)
         self.ftp.disconnect()
 
+###############################################################################################
+
+    def join_process(self):
+        if self.nb_processe != 0:
+            for process in self.listProcesses:
+                process.join()
+
+    def file_transfer_multi_p(self, path_file, srv_full_path, file_name):
+
+        if self.nb_processe == 0:
+            self.ftp.file_transfer(path_file, srv_full_path, file_name)
+        else:
+            job = multi_processing.Queue_initialisation(path_file, srv_full_path, file_name)
+            multi_processing.Queue_initialisation.QUEUE.put(job)
+
+###############################################################################################
+
     def synchronize_directory(self, frequency):
         while True:
+
             # init the path explored to an empty list before each synchronization
             self.paths_explored = []
 
@@ -45,14 +82,39 @@ class DirectoryManager:
 
             # search for an eventual updates of files in the root directory
             self.ftp.connect()
-            self.search_updates(self.root_directory)
 
-            # look for any removals of files / directories
-            self.any_removals()
-            self.ftp.disconnect()
+            try :
+                self.search_updates (self.root_directory)
 
+                # look for any removals of files / directories
+                self.any_removals()
+                self.ftp.disconnect()
+######################################################################################################################################################
+                if True :
+                    r = input ( )
+                    if r.upper ( ) == "QQ" :
+                        i=0
+                        for pr in self.listProcesses :
+                            pr.terminate ( )
+                            print('terminate {}'.format(i))
+                            i +=1
+                        return
+                    elif r.upper ( ) == "D" :
+                        print (self.listProcesses)
+
+                        """else :
+                    ##print('oki')
+                    for p in self.listProcesses :
+                        p.join ( )"""
+
+            except (KeyboardInterrupt, SystemExit) :
+                for pr in self.listProcesses :
+                    pr.terminate ( )
+##############################################################################################################################################################
             # wait before next synchronization
             time.sleep(frequency)
+
+
 
     def search_updates(self, directory):
         # scan recursively all files & directories in the root directory
@@ -77,7 +139,7 @@ class DirectoryManager:
                         # create it on FTP server
                         split_path = folder_path.split(self.root_directory)
                         srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
-                        directory_split = srv_full_path.rsplit(os.path.sep,1)[0]
+                        directory_split = srv_full_path.rsplit(os.path.sep, 1)[0]
                         if not self.ftp.if_exist(srv_full_path, self.ftp.get_folder_content(directory_split)):
                             # add this directory to the FTP server
                             self.ftp.create_folder(srv_full_path)
@@ -100,17 +162,22 @@ class DirectoryManager:
                             split_path = file_path.split(self.root_directory)
                             srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
                             self.ftp.remove_file(srv_full_path)
+
                             # update this file on the FTP server
-                            self.ftp.file_transfer(path_file, srv_full_path, file_name)
+#######################################################################################################################
+                            self.file_transfer_multi_p(path_file, srv_full_path, file_name)
+#######################################################################################################################
 
                     else:
-
                         # file get created
                         self.synchronize_dict[file_path] = File(file_path)
                         split_path = file_path.split(self.root_directory)
                         srv_full_path = '{}{}'.format(self.ftp.directory, split_path[1])
-                        # add this file on the FTP server
-                        self.ftp.file_transfer(path_file, srv_full_path, file_name)
+                        # update this file on the FTP server
+
+#######################################################################################################################
+                        self.file_transfer_multi_p(path_file, srv_full_path, file_name)
+#######################################################################################################################
 
     def any_removals(self):
         # if the length of the files & folders to synchronize == number of path explored
@@ -166,9 +233,10 @@ class DirectoryManager:
         sorted_containers = sorted(directory_containers.values())
 
         # we iterate starting from the innermost file
-        for i in range(len(sorted_containers)-1, -1, -1):
+        for i in range(len(sorted_containers) - 1, -1, -1):
             for to_delete in sorted_containers[i]:
-                to_delete_ftp = "{0}{1}{2}".format(self.ftp.directory, os.path.sep, to_delete.split(self.root_directory)[1])
+                to_delete_ftp = "{0}{1}{2}".format(self.ftp.directory, os.path.sep,
+                                                   to_delete.split(self.root_directory)[1])
                 if isinstance(self.synchronize_dict[to_delete], File):
                     self.ftp.remove_file(to_delete_ftp)
                     self.to_remove_from_dict.append(to_delete)

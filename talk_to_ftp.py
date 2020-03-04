@@ -2,7 +2,6 @@ import os
 from ftplib import FTP
 from logger import Logger
 
-
 class TalkToFTP:
     def __init__(self, ftp_website):
         my_srv = ftp_website.split(",")
